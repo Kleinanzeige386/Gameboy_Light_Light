@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include<windows.h> //remove
+#include <conio.h>
+
+
 
 int MATRIXWIDTH = 16;
 int MATRIXHEIGHT = 8;
 int POINTSTOWIN = 4;
-int MSperStep=500;
+int MSperStep=50;
 
 int ball[]={8,4};
 int ballvelocity[]={1,1};
@@ -47,7 +50,8 @@ void checkVelo(){
         if (ball[1]>=(MATRIXHEIGHT-1) || ball[1]<=0)  //Top or Bottom
     {
         ballvelocity[1] *= -1;
-    }else if (ball[0]>=(MATRIXWIDTH-1) || ball[0]<=0)   //Right or Left
+    }
+    if (ball[0]>=(MATRIXWIDTH-1) || ball[0]<=0)   //Right or Left
     {
          ballvelocity[0] *= -1;
     }
@@ -64,14 +68,22 @@ void playround(){
 
     printf("\n%d : %d",playerpoints[0],playerpoints[1]); //REMOVE
     simulate(); //Remove
+    int iterations=0;
+    int outOfBounds=0;
+
     while(checkWin()==0){
+
+        if( (ball[1]>(MATRIXHEIGHT-1))   ||  (ball[0]>(MATRIXWIDTH-1 ))  ||  ball[0]<0   ||  ball[1]<0      ){outOfBounds++;} //remove
+        printf("\n\nIteration %10d                Times out of Bounds: %d",++iterations,outOfBounds);   //remove
+
         Sleep(MSperStep); // Replace with delay(x)
         
         checkVelo();
     
         moveBall();
 
-        simulate(); //Remove
+       system("cls");   //remove
+       simulate(); //Remove
         
     }
 
