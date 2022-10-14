@@ -6,27 +6,33 @@
 
 int MATRIXWIDTH = 16;
 int MATRIXHEIGHT = 8;
-int POINTSTOWIN = 4;
-int MSperStep=100;
+int POINTSTOWIN = 100;
+int MSperStep=1;
+int game=0;
 
-int ball[]={8,4};
-int ballvelocity[]={1,1};
+int ball[2];
+int ballvelocity[2];
 
-int player=0;
-int bot=0;
-int playervelocity=-1; //replace wit poti
-int botvelocity=-1;
-int playerpoints[]={0,0};
+int player;
+int bot;
+int playervelocity; //replace wit poti
+int botvelocity;
+int playerpoints[2];
 
-void checkVelo();
-int checkWin();
+
+
 void playround();
+void resetround();
 void simulate();
-void movePlayers();
-void moveBall();
+int checkWin();
+
 bool isXBorder(int n);
 bool isYBorder(int n);
-
+bool hitsPlayers();
+void checkVelo();
+void changeBotVeloSmart();
+void movePlayers();
+void moveBall();
 
 /*
 Grid:
@@ -36,48 +42,112 @@ Grid:
     04  13  23  33
 */
 
+void playround(){
 
+    printf("\n%d : %d",playerpoints[0],playerpoints[1]); //REMOVE
+    simulate(); //Remove
+    int iterations=0;//Remove
+    int outOfBounds=0;//Remove
+
+    resetround();
+    while(checkWin()==0){
+
+
+        //Sleep(MSperStep); // Replace with delay(x)
+       
+        movePlayers(); 
+        checkVelo();
+        
+        moveBall();
+
+       system("cls");   //remove
+       simulate(); //Remove
+        
+    }
+
+}
+
+void resetround(){
+    ball[0]=8;
+    ball[1]=4;
+
+    ballvelocity[0]=1;
+    ballvelocity[1]=1;
+
+    player=0;
+    bot=0;
+    playervelocity=-1; //replace wit poti
+    botvelocity=-1;
+
+
+
+}
+
+void simulate(){ //Remove
+    /*
+    * SIMULATION START
+    */
+
+   printf("\nGame: %d\n\n Ball:  %d|%d\n Player:  %d\n Bot: %d\n\n",game,ball[0],ball[1],playerpoints[0],playerpoints[1]);
+
+   /*
+    for (int i = 0; i < MATRIXHEIGHT ; i++) //Go through Matrix rows
+    {
+        printf("\n"); //Start new row
+        
+        for (int  j = 0; j < 16 ; j++)//Go through Matrix Collumns
+        {
+            char* temp="- ";
+          
+            if ((ball[0]==j) && (ball[1]==i)) //Is Ball in that position?
+            {
+                temp="O ";
+            }else if (      j==0 && ((player==i)  ||  player==i-1))
+            {
+                temp="P ";
+            }else if (    j==(MATRIXWIDTH-1) && ((bot==i)  ||  bot==i-1))
+            {
+                temp="B "; 
+            }
+
+            printf(temp);
+            
+        }
+        
+    }
+    printf("\n\n");
+    */
+    
+   /*
+    * SIMULATION END
+    */
+}
 
 int checkWin(){    //Is Ball on the far left or right side of the Matrix?
-/*
-    if (ball[1]==(MATRIXHEIGHT-1)) //Right Side
+
+    if (ball[0]==(MATRIXWIDTH-1)) //Right Side
     {
         playerpoints[0]++;
         return 1;   //Left Player wins
-    }else if (ball[1]==0)   //Left Side
+    }else if (ball[0]==0)   //Left Side
     {
         playerpoints[1]++;
         return 2; //Right Player wins
     }
-    */
+
     return 0;
     
 }
 
-bool isYBorder(int n){
-    if (n>=(MATRIXHEIGHT-1) || n<=0) return true;
-    return false;
-}
 
 bool isXBorder(int n){
     if (n>=(MATRIXWIDTH-1) || n<=0) return true;
     return false;
 }
 
-void movePlayers(){
-    if (isYBorder(player) || isYBorder(player+1))
-    {
-        playervelocity *= -1;
-    }
-
-    if (isYBorder(bot) || isYBorder(bot+1))
-    {
-        botvelocity *= -1;
-    }
-
-    player += playervelocity;
-    bot += botvelocity;
-    
+bool isYBorder(int n){
+    if (n>=(MATRIXHEIGHT-1) || n<=0) return true;
+    return false;
 }
 
 bool hitsPlayers(){
@@ -119,81 +189,65 @@ void checkVelo(){
     
 }
 
+void movePlayers(){
+    changeBotVeloSmart();
+    if (isYBorder(player) || isYBorder(player+1))
+    {
+        playervelocity *= -1;
+    }
+
+
+    player += playervelocity;
+    bot += botvelocity;
+    
+}
+
 void moveBall(){
     ball[0]+=ballvelocity[0];
     ball[1]+=ballvelocity[1];
 }
 
-void playround(){
-
-    printf("\n%d : %d",playerpoints[0],playerpoints[1]); //REMOVE
-    simulate(); //Remove
-    int iterations=0;
-    int outOfBounds=0;
-
-    while(checkWin()==0){
-
-    //    if( (ball[1]>(MATRIXHEIGHT-1))   ||  (ball[0]>(MATRIXWIDTH-1 ))  ||  ball[0]<0   ||  ball[1]<0      ){outOfBounds++;} //remove
-    //    printf("\n\nIteration %10d                Times out of Bounds: %d",++iterations,outOfBounds);   //remove
-
-        Sleep(MSperStep); // Replace with delay(x)
-       
-        movePlayers(); 
-        checkVelo();
-        
-        moveBall();
-
-       system("cls");   //remove
-       simulate(); //Remove
-        
-    }
-
-}
-
-void simulate(){ //Remove
-    /*
-    * SIMULATION START
-    */
-
-   printf("\n Ball:  %d|%d\n Player:  0 |%d\n Bot:  15 |%d\n\n",ball[0],ball[1],player,bot);
-    for (int i = 0; i < MATRIXHEIGHT ; i++) //Go through Matrix rows
-    {
-        printf("\n"); //Start new row
-        
-        for (int  j = 0; j < 16 ; j++)//Go through Matrix Collumns
-        {
-            char* temp="- ";
-          
-            if ((ball[0]==j) && (ball[1]==i)) //Is Ball in that position?
-            {
-                temp="O ";
-            }else if (      j==0 && ((player==i)  ||  player==i-1))
-            {
-                temp="P ";
-            }else if (    j==(MATRIXWIDTH-1) && ((bot==i)  ||  bot==i-1))
-            {
-                temp="B "; 
-            }
-
-            printf(temp);
-            
-        }
-        
-    }
-    printf("\n\n");
+void changeBotVeloSmart(){
     
-   /*
-    * SIMULATION END
-    */
+    if(bot>ball[1]){    
+        botvelocity=1;                                                                                                             //              bot
+    }                                                                                                                                           //              bot+1
+    if ((bot+1)>ball[1])
+    {
+        botvelocity=-1;
+    }
+
+
+    switch (bot)
+    {
+    case 0:
+            botvelocity=1;
+        break;
+
+    case 6:
+            botvelocity=-1;
+        break;    
+    
+    default:
+        break;
+    }
+
+    
 }
+
 
 int main(int argc, char const *argv[])
 {
 
-    while((playerpoints[0]<POINTSTOWIN) && (playerpoints[1]<POINTSTOWIN)){
+    while((playerpoints[0]<=POINTSTOWIN) && (playerpoints[1]<=POINTSTOWIN)){
         playround();
-      
+        game +=1;
     }
+    //system("cls");   //remove
+    if (playerpoints[0]>playerpoints[1]) printf("player 1 Won!");  else printf("player 2 Won!");
+    
+
+
 
     scanf(("\nEnd\n"));
 
