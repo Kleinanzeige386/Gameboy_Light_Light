@@ -1,22 +1,67 @@
 /*
  * Includes
  */
-#include <stdio.h>
-#include<windows.h> //remove
-#include <conio.h> //remove
-
-#pragma clang diagnostic pop// remove
+ #include <Arduino.h>
 
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Writable-strings"
 /*
  * Constants
  */
-const int MATRIXWIDTH = 16;     //Number of collumns in the matrix
+const int MATRIXWIDTH = 8;     //Number of collumns in the matrix
 const int MATRIXHEIGHT = 8;     //Number of rows in the matrix
 const int POINTSTOWIN = 100;    //Number of Points, needed to win
 const int MSperStep=50;        // Miliseconds between steps
+
+
+
+#define ROW_1 22
+#define ROW_2 24
+#define ROW_3 26
+#define ROW_4 28
+#define ROW_5 30
+#define ROW_6 32
+#define ROW_7 34
+#define ROW_8 36
+
+#define COL_1 38
+#define COL_2 40
+#define COL_3 42
+#define COL_4 44
+#define COL_5 46
+#define COL_6 48
+#define COL_7 50
+#define COL_8 52
+
+#define ROW_9 23
+#define ROW_10 25
+#define ROW_11 27
+#define ROW_12 29
+#define ROW_13 31
+#define ROW_14 33
+#define ROW_15 35
+#define ROW_16 37
+
+#define COL_9 39
+#define COL_10 41
+#define COL_11 43
+#define COL_12 45
+#define COL_13 47
+#define COL_14 49
+#define COL_15 51
+#define COL_16 53
+
+const byte row1[] = {
+  ROW_1, ROW_2, ROW_3, ROW_4, ROW_5, ROW_6, ROW_7, ROW_8,
+};
+const byte row2[] = {
+   ROW_9, ROW_10, ROW_11, ROW_12, ROW_13, ROW_14, ROW_15, ROW_16
+};
+const byte col1[] = {
+  COL_1, COL_2, COL_3, COL_4, COL_5, COL_6, COL_7, COL_8
+};
+const byte col2[] ={
+   COL_9, COL_10, COL_11, COL_12, COL_13, COL_14, COL_15, COL_16
+};
 
 
 /*
@@ -44,6 +89,7 @@ Direction ballVelocity[2];    // x | y directions of the ball
 Player user;    // Human player
 Player bot;     // Bot player
 
+int poti=0;
 
 /*
  * Grid schema
@@ -62,7 +108,7 @@ Player bot;     // Bot player
 /*
  * Function prototypes
  */
-int main(int argc, char const *argv[]); //Main program
+int main(); //Main program
 
 void playRound();   //plays a round of Pong until one Player scores a point
 void resetRound();  //resets all needed variables
@@ -75,14 +121,32 @@ void checkBallVelo();   //checks whether the ball hits a border / Player
 void changeBotVeloSmart();  //Used by bot player to track the ball movement
 void movePlayers();    //moves players
 
-void simulate();    //Prints the game to the console, !!!!!remove when porting!!!!!
+
+void getPlayerInput(); //Change Position to Poti status
+void writeOutput(); // Write Coords to Matrix
 
 
 /*
  * Functions
  */
 
-int main(int argc, char const *argv[])
+void setup(){
+  pinMode(LED_BUILTIN, OUTPUT);
+  Potisetup();
+  Drawsetup();
+  for (byte i = 22; i <= 52; i += 2)
+    pinMode(i, OUTPUT);
+  for (byte i = 23; i <= 53; i += 2)
+    pinMode(i, OUTPUT);
+}
+
+void loop(){
+  main();
+}
+
+
+
+int main()
 {
     user.border = LEFT_BORDER;
     bot.border = RIGHT_BORDER;
@@ -91,15 +155,6 @@ int main(int argc, char const *argv[])
         playRound();
         game +=1;
     }
-    //system("cls");   //remove
-    if (playerPoints[0]>playerPoints[1]) printf("player 1 Won!");  else printf("player 2 Won!");
-
-
-
-
-    scanf(("\nEnd\n")); //remove
-
-
 
     return 0;
 }
@@ -107,17 +162,15 @@ int main(int argc, char const *argv[])
 void playRound(){
     resetRound();
 
-    printf("\n%d : %d",playerPoints[0],playerPoints[1]); //REMOVE
-    simulate(); //Remove
-    int iterations=0;//Remove
-    int outOfBounds=0;//Remove
-
+  
     while(!checkWin()){
-        Sleep(MSperStep); // Replace with delay(x)
+        readPoti();
+        delay(MSperStep); 
         movePlayers();
         moveBall();
+        
+        writeOutput();
 
-        simulate(); //Remove
     }
 
 }
@@ -137,7 +190,7 @@ void resetRound(){
 }
 
 bool checkWin(){    //Is Ball on the far left or right side of the Matrix?
-
+/*
     if (ball[0] == (RIGHT_BORDER))
     {
         playerPoints[0]++;
@@ -147,7 +200,7 @@ bool checkWin(){    //Is Ball on the far left or right side of the Matrix?
         playerPoints[1]++;
         return true; //Right Player wins
     }
-
+*/
     return false;
 
 }
@@ -160,12 +213,12 @@ void moveBall(){
 }
 
 void checkBallVelo(){
-    if( ( ball[0]==LEFT_BORDER ) || ( hitsPlayer()== -1) )//Ball hits leftBorder or User
+    if( ( ball[0]==LEFT_BORDER ) /*|| ( hitsPlayer()== -1)*/ )//Ball hits leftBorder or User
     {
         ballVelocity[0] = RIGHT;
     }
 
-    if( ( ball[0]==RIGHT_BORDER ) || ( hitsPlayer()== 1) )//Ball hits leftBorder or User
+    if( ( ball[0]==RIGHT_BORDER ) /*|| ( hitsPlayer()== 1)*/ )//Ball hits leftBorder or User
     {
         ballVelocity[0] = LEFT;
     }
@@ -205,7 +258,7 @@ Player changeBotVeloSmart(Player player){
 
     if(player.yCoordinate+1 > ball[1]){ //Is players head lower than ball?
         player.direction =UP;                                                                                                             //              bot
-    }                                                                                                                                           //              bot+1
+    }                                                                                                                                     //              bot+1
     if ((player.yCoordinate)<ball[1]){ //Is players body higher than ball?
         player.direction = DOWN;
     }
@@ -229,53 +282,97 @@ Player changeBotVeloSmart(Player player){
 }
 
 void movePlayers(){
-    user = changeBotVeloSmart(bot);
-    bot = changeBotVeloSmart(user);
+    getPlayerInput(); //Get Player position from Input
 
-    user.yCoordinate += user.direction;
+    bot = changeBotVeloSmart(bot);
     bot.yCoordinate  += bot.direction;
 }
 
 
-void simulate(){ //Remove
-    /*
-    * SIMULATION START
-    */
-    system("cls");
-    printf("\nGame: %d\n\n Ball:  %d|%d\n Player:  %d\n Bot: %d\n\n",game,ball[0],ball[1],playerPoints[0],playerPoints[1]);
 
-
-    for (int i = 0; i < MATRIXHEIGHT ; i++) //Go through Matrix rows
-    {
-        printf("\n"); //Start new row
-
-        for (int  j = 0; j < 16 ; j++)//Go through Matrix Collumns
-        {
-            char* temp="- ";
-
-            if ((ball[0]==j) && (ball[1]==i)) //Is Ball in that position?
-            {
-                temp="O ";
-            }else if (      j==0 && ((user.yCoordinate ==i)  ||  user.yCoordinate==i-1))
-            {
-                temp="P ";
-            }else if (    j==(MATRIXWIDTH-1) && ((bot.yCoordinate ==i)  ||  bot.yCoordinate ==i-1))
-            {
-                temp="B ";
-            }
-
-            printf("%s", temp);
-
-        }
-
-    }
-    printf("\n\n");
-
-
-    /*
-     * SIMULATION END
-     */
+void getPlayerInput(){
+    user.yCoordinate = poti;
 }
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+byte xToByte(int x){
+  switch(x){
+    case 0:
+      return B10000000;
+  
+    case 1:
+      return B01000000;
+
+    case 2:
+      return B00100000;
+
+    case 3:
+      return B00010000;
+
+    case 4:
+      return B00001000;
+
+    case 5:
+      return B00000100;
+
+    case 6:
+      return B00000010;
+
+    case 7:
+      return B00000001;
+  
+  }
+
+}
+
+byte* CoordInterpreter(int Matrix){
+  byte result[8]={B00000000,B00000000,B00000000,B00000000,B00000000,B00000000,B00000000,B00000000};
+
+  switch(Matrix){
+    case 0: //Left Matrix
+      for(int i=0; i<8;i++){ //Go through rows
+        if((ball[1] == i) && (ball[0]< 8) ){  //Is ball in row and in first matrix?
+          result[i]= result[i] & xToByte(ball[0]);
+        }
+      }
+
+      break;
+
+    case 1: //Right MAtrix
+      for(int i=0; i<8;i++){ //Go through rows
+        if((ball[1] == i) && (ball[0]> 7) ){//Is ball in row and in second matrix?
+          result[i]= result[i] & xToByte(ball[0]);
+        }
+      }
+      break;
+
+    
+  }
+
+  return result;
+
+
+  
+
+}
+
+void writeOutput(){
+
+    drawScreen(CoordInterpreter(0),row1,col1);
+
+
+}
