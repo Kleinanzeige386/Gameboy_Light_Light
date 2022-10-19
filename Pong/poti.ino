@@ -1,7 +1,6 @@
 const int buzzer =  2;
 
 int eingang = A0;
-int poti = 0;
 int A = 53; // Passt, Pin für 7 Segment A
 int B = 52; // Passt, Pin für 7 Segment B
 int H = 51; // Passt, Pin für 7 Segment H
@@ -14,7 +13,7 @@ int F = 46; // Passt, Pin für 7 Segment F
 
 // SETUP
 
-void setup() {
+void Potisetup() {
   // put your setup code here, to run once:
 pinMode(A, OUTPUT);
 pinMode(B, OUTPUT);
@@ -168,7 +167,7 @@ void nine()
 // LOOP
 
 
-void loop() {
+void readPoti() {
   // put your main code here, to run repeatedly:
 
 poti = analogRead(eingang);

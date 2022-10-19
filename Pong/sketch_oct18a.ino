@@ -1,3 +1,4 @@
+/*
 #define ROW_1 22
 #define ROW_2 24
 #define ROW_3 26
@@ -46,9 +47,11 @@ const byte col1[] = {
 const byte col2[] ={
    COL_9, COL_10, COL_11, COL_12, COL_13, COL_14, COL_15, COL_16
 };
+*/
 
 // The display buffer
 // It's prefilled with a smiling face (1 = ON, 0 = OFF)
+/*
 byte ALL[] = { B11111111, B11111111, B11111111, B11111111, B11111111, B11111111, B11111111, B11111111 };
 byte EX[] = { B00000000, B00010000, B00010000, B00010000, B00010000, B00000000, B00010000, B00000000 };
 byte A[] = { B00000000, B00111100, B01100110, B01100110, B01111110, B01100110, B01100110, B01100110 };
@@ -77,7 +80,7 @@ byte W[] = { B00000000, B10000010, B10010010, B01010100, B01010100, B00101000, B
 byte X[] = { B00000000, B01000010, B00100100, B00011000, B00011000, B00100100, B01000010, B00000000 };
 byte Y[] = { B00000000, B01000100, B00101000, B00010000, B00010000, B00010000, B00010000, B00000000 };
 byte Z[] = { B00000000, B00111100, B00000100, B00001000, B00010000, B00100000, B00111100, B00000000 };
-
+*/
 
 byte ROW0[] = { B01111111, B01111111, B01111111, B01111111, B01111111, B01111111, B01111111, B01111111 };
 byte ROW1[] = { B10111111, B10111111, B10111111, B10111111, B10111111, B10111111, B10111111, B10111111 };
@@ -90,7 +93,7 @@ byte ROW7[] = { B11111110, B11111110, B11111110, B11111110, B11111110, B11111110
 
 float timeCount = 0;
 
-void setup() {
+void Drawsetup() {
   // Open serial port
   Serial.begin(9600);
 
@@ -104,7 +107,7 @@ void setup() {
   for (byte i = 31; i <= 37; i += 2)
     pinMode(i, OUTPUT);
 }
-
+/*
 void loop() {
   
   for(int i = 0; i < 100; i++){
@@ -147,6 +150,7 @@ void loop() {
     drawScreen(ROW7, row2, col2);
   }
 }
+*/
 
 /*
 Prototyping, works for a single Display but has Issues with the second one,
