@@ -1,4 +1,4 @@
-/*
+
 #define ROW_1 22
 #define ROW_2 24
 #define ROW_3 26
@@ -34,7 +34,7 @@
 #define COL_14 33
 #define COL_15 35
 #define COL_16 37
-
+/*
 const byte row1[] = {
   ROW_1, ROW_2, ROW_3, ROW_4, ROW_5, ROW_6, ROW_7, ROW_8,
 };
@@ -92,6 +92,7 @@ byte ROW6[] = { B11111101, B11111101, B11111101, B11111101, B11111101, B11111101
 byte ROW7[] = { B11111110, B11111110, B11111110, B11111110, B11111110, B11111110, B11111110, B11111110 };
 
 float timeCount = 0;
+byte DRAW_REQUEST[16];
 
 void Drawsetup() {
   // Open serial port
@@ -106,11 +107,35 @@ void Drawsetup() {
     pinMode(i, OUTPUT);
   for (byte i = 31; i <= 37; i += 2)
     pinMode(i, OUTPUT);
+
+  resetRequest();
 }
 
-void loop() {
-}
+/*
+void loop(){
+  
+  resetRequest();
 
+  drawBitOnMap(0,0);
+  drawBitOnMap(7,7);
+  
+  drawBitOnMap(2,5);
+  drawBitOnMap(5,2);
+  
+  drawBitOnMap(4,7);
+  drawBitOnMap(7,6);
+  
+  
+  drawBitOnMap(8,8);
+  drawBitOnMap(15,15);
+
+  for(int i = 0; i < 10000; i++){
+    drawToScreen();
+  }
+  
+  delay(1000);
+}
+*/
 /* Man verwendet selbst ein Byte Array welches 16 Inhalte hat
     Das Bytearray soll per default auf alles 1 gesetzt werden
 
@@ -124,19 +149,39 @@ void loop() {
     Um abschließend das Ergebnis auf die Matrizen zu malen wird die Funktion drawToScreen(byte BITMAP[])
     aufgerufen
 */
-byte ERGEBNIS[] drawBitOnMap(PosX, PosY, byte INPUT[]){
-  if(PosX > 7){
-    return INPUT[PosY + 8] ^= (B00000000 < PosX);  
+
+
+void resetRequest(){
+  byte temp = B11111111;
+
+  for( int i = 0; i< 16 ; i++){
+    DRAW_REQUEST[i] = temp;
   }
-  return INPUT[PosY] ^= (B00000000 < PosX);    
 }
 
-void drawToScreen(byte BITMAP[]){
-  byte Screen1[] = {BITMAP[0],BITMAP[1],BITMAP[2],BITMAP[3],BITMAP[4],BITMAP[5],BITMAP[6],BITMAP[7]};
-  byte Screen2[] = {BITMAP[8],BITMAP[9],BITMAP[10],BITMAP[11],BITMAP[12],BITMAP[13],BITMAP[14],BITMAP[15]};
+
+void drawBitOnMap(int PosX, int PosY){
+  if(PosX > 7){
+    DRAW_REQUEST[PosY + 8] ^= (B00000001 << (PosX-8));
+  }
+  else{
+    DRAW_REQUEST[PosY] ^= (B00000001 << PosX);
+  }
+}
+
+byte[] getDrawRequest(){
+  return DRAW_REQUEST;
+}
+
+void drawToScreen(){
+  
+  byte Screen1[] = {DRAW_REQUEST[0],DRAW_REQUEST[1],DRAW_REQUEST[2],DRAW_REQUEST[3],DRAW_REQUEST[4],DRAW_REQUEST[5],DRAW_REQUEST[6],DRAW_REQUEST[7]};
+  byte Screen2[] = {DRAW_REQUEST[8],DRAW_REQUEST[9],DRAW_REQUEST[10],DRAW_REQUEST[11],DRAW_REQUEST[12],DRAW_REQUEST[13],DRAW_REQUEST[14],DRAW_REQUEST[15]};
 
   drawScreen(Screen1, row1, col1);
   drawScreen(Screen2, row2, col2);
+
+  //resetRequest();
 }
 
 // Resets the entire display to 0
