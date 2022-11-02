@@ -107,69 +107,22 @@ void Drawsetup() {
   for (byte i = 31; i <= 37; i += 2)
     pinMode(i, OUTPUT);
 }
-/*
+
 void loop() {
-  
-  for(int i = 0; i < 100; i++){
-    drawScreen(ROW0, row1, col1);
-    drawScreen(ROW0, row2, col2);
-  }
-  
-  for(int i = 0; i < 100; i++){
-    drawScreen(ROW1, row1, col1);
-    drawScreen(ROW1, row2, col2);
-  }
-  
-  for(int i = 0; i < 100; i++){
-    drawScreen(ROW2, row1, col1);
-    drawScreen(ROW2, row2, col2);
-  }
-
-  for(int i = 0; i < 100; i++){
-    drawScreen(ROW3, row1, col1);
-    drawScreen(ROW3, row2, col2);
-  }
-  
-  for(int i = 0; i < 100; i++){
-    drawScreen(ROW4, row1, col1);
-    drawScreen(ROW4, row2, col2);
-  }
-
-  for(int i = 0; i < 100; i++){
-    drawScreen(ROW5, row1, col1);
-    drawScreen(ROW5, row2, col2);
-  }
-  
-  for(int i = 0; i < 100; i++){
-    drawScreen(ROW6, row1, col1);
-    drawScreen(ROW6, row2, col2);
-  }
-  
-  for(int i = 0; i < 100; i++){
-    drawScreen(ROW7, row1, col1);
-    drawScreen(ROW7, row2, col2);
-  }
 }
-*/
 
-/*
-Prototyping, works for a single Display but has Issues with the second one,
-technically irrelevant, cause in Order to draw multiple Pixels at once onto
-the screen a bitmap is needed, so this is not useful, just for testing / debugging
-purposes or to see wheather the display is connected properly
-void drawPixel(byte posX, byte posY) {
-  for (byte i = 0; i < 16; i++) {
-    if (i == posX) {
-      digitalWrite(rows[i], HIGH);
-    }
-    for (byte n = 0; n < 8; n++) {
-      if (n == posY) {
-        digitalWrite(col[n], LOW);
-      }
-    }
-  }
+
+byte ERGEBNIS[] drawBitOnMap(PosX, PosY, byte INPUT[]){
+  return INPUT[PosY] ^= (B00000000 < PosX);  
 }
-*/
+
+void drawToScreen(byte BITMAP[]){
+  byte Screen1[] = {BITMAP[0],BITMAP[1],BITMAP[2],BITMAP[3],BITMAP[4],BITMAP[5],BITMAP[6],BITMAP[7]};
+  byte Screen2[] = {BITMAP[8],BITMAP[9],BITMAP[10],BITMAP[11],BITMAP[12],BITMAP[13],BITMAP[14],BITMAP[15]};
+
+  drawScreen(Screen1, row1, col1);
+  drawScreen(Screen2, row2, col2);
+}
 
 // Resets the entire display to 0
 void resetDisplay() {
