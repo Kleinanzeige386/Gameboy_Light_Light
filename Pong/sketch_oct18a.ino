@@ -111,9 +111,24 @@ void Drawsetup() {
 void loop() {
 }
 
+/* Man verwendet selbst ein Byte Array welches 16 Inhalte hat
+    Das Bytearray soll per default auf alles 1 gesetzt werden
 
+    - Screen 1: Bitmap[0] bis Bitmap[7]
+    - Screen 2: Bitmap[8] bis Bitmap[15]
+    
+    PosX geht von 0 bis 15
+    PosY geht von 0 bis 7
+    
+    diese Funktion kann n-mal aufgerufen werden
+    Um abschließend das Ergebnis auf die Matrizen zu malen wird die Funktion drawToScreen(byte BITMAP[])
+    aufgerufen
+*/
 byte ERGEBNIS[] drawBitOnMap(PosX, PosY, byte INPUT[]){
-  return INPUT[PosY] ^= (B00000000 < PosX);  
+  if(PosX > 7){
+    return INPUT[PosY + 8] ^= (B00000000 < PosX);  
+  }
+  return INPUT[PosY] ^= (B00000000 < PosX);    
 }
 
 void drawToScreen(byte BITMAP[]){
