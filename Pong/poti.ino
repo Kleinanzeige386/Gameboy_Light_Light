@@ -1,6 +1,8 @@
 const int buzzer =  2;
 
+
 int potiInput = A0;
+
 int A = 53; // Passt, Pin für 7 Segment A
 int B = 52; // Passt, Pin für 7 Segment B
 int H = 51; // Passt, Pin für 7 Segment H
@@ -170,7 +172,9 @@ void nine()
 void readPoti() {
   // put your main code here, to run repeatedly:
 
+
 poti = analogRead(potiInput);
+
 
 
 if (poti <= 146) // 0
