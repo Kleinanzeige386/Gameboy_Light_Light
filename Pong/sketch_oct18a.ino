@@ -15,13 +15,22 @@ drawBitOnMap() sets the Bit at the PositionX and PositionY so that it is turned 
   PosX is in range 0 to 15
   Posy is in range 0 to 7
 */
-byte updated_BITMAP[] drawBitOnMap(PosX, PosY, byte BITMAP[]){
+
+void drawBitOnMap(byte PosX, byte PosY, byte BITMAP[]){
   if(PosX > 7){
     BITMAP[PosY + 8] ^= (B00000001 << (PosX-8));
 
   }
   else{
     BITMAP[PosY] ^= (B00000001 << PosX);
+  } 
+}
+
+
+// Fills an entire array with Bytes that are all 1 --> The default state of the LED-Matrices for 1 is off
+void createBitMap(byte Bitmap[], int bitmap_Lenght){
+  for(byte i = 0; i < bitmap_Length; i++){
+    Bitmap[i] = B11111111;
   } 
 }
 
