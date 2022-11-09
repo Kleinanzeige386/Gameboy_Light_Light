@@ -89,7 +89,7 @@ Direction ballVelocity[2];    // x | y directions of the ball
 Player user;    // Human player
 Player bot;     // Bot player
 
-int poti=0;
+
 
 /*
  * Grid schema
@@ -303,7 +303,7 @@ void movePlayers(){
 
 void getPlayerInput(){
     readPoti(); //Update poti variable
-    user.yCoordinate = poti; //Set player coordinates to input
+    user.yCoordinate = GameOutput; //Set player coordinates to input
 }
 
 
