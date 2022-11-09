@@ -7,7 +7,7 @@
 /*
  * Constants
  */
-const int MATRIXWIDTH = 8;     //Number of collumns in the matrix
+const int MATRIXWIDTH = 16;     //Number of collumns in the matrix
 const int MATRIXHEIGHT = 8;     //Number of rows in the matrix
 const int POINTSTOWIN = 100;    //Number of Points, needed to win
 const int MSperStep=50;        // Miliseconds between steps
@@ -125,12 +125,18 @@ void movePlayers();    //moves players
 void getPlayerInput(); //Change Position to Poti status
 void writeOutput(); // Write Coords to Matrix
 
+void Poitsetup();
+void DrawSetup();
+
+
 
 /*
  * Functions
  */
 
 void setup(){
+
+  Serial.begin(9600);
   pinMode(LED_BUILTIN, OUTPUT);
   Potisetup();
   Drawsetup();
@@ -140,14 +146,25 @@ void setup(){
     pinMode(i, OUTPUT);
 }
 
+
+
 void loop(){
-  main();
+  resetRequest();
+drawBitOnMap(4,4);
+  Serial.print(getDrawRequest());
+for(int i = 0; i < 1000; i++)
+  {
+drawToScreen();
+  }
+  delay(1000);
+  //main();
 }
 
 
 
 int main()
 {
+  /*
     user.border = LEFT_BORDER;
     bot.border = RIGHT_BORDER;
 
@@ -155,6 +172,8 @@ int main()
         playRound();
         game +=1;
     }
+    */
+    writeOutput();
 
     return 0;
 }
@@ -295,20 +314,6 @@ void getPlayerInput(){
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 byte xToByte(int x){
   switch(x){
     case 0:
@@ -337,33 +342,9 @@ byte xToByte(int x){
   
   }
 
-}
 
-byte* CoordInterpreter(int Matrix){
-  byte result[8]={B00000000,B00000000,B00000000,B00000000,B00000000,B00000000,B00000000,B00000000};
 
-  switch(Matrix){
-    case 0: //Left Matrix
-      for(int i=0; i<8;i++){ //Go through rows
-        if((ball[1] == i) && (ball[0]< 8) ){  //Is ball in row and in first matrix?
-          result[i]= result[i] & xToByte(ball[0]);
-        }
-      }
 
-      break;
-
-    case 1: //Right MAtrix
-      for(int i=0; i<8;i++){ //Go through rows
-        if((ball[1] == i) && (ball[0]> 7) ){//Is ball in row and in second matrix?
-          result[i]= result[i] & xToByte(ball[0]);
-        }
-      }
-      break;
-
-    
-  }
-
-  return result;
 
 
   
@@ -371,8 +352,22 @@ byte* CoordInterpreter(int Matrix){
 }
 
 void writeOutput(){
+  /*
+  drawBitOnMap(ball[0],ball[1]);
 
-    drawScreen(CoordInterpreter(0),row1,col1);
+  drawBitOnMap(0, user.yCoordinate);
+  drawBitOnMap(0, user.yCoordinate+1);
 
+
+  drawBitOnMap(MATRIXWIDTH-1, bot.yCoordinate);
+  drawBitOnMap(MATRIXWIDTH-1, bot.yCoordinate+1);
+  */
+  drawBitOnMap(4,4);
+
+  drawToScreen();
 
 }
+
+
+
+
