@@ -1,6 +1,7 @@
 
 /*
 The following illustrates the 2 LED-Matrices that are connected to the Microcontroller side by side
+
 1 1 1 1 0 0 0 0 1 1 1 1 0 0 0 0 
 0 0 0 0 1 1 1 1 0 0 0 0 1 1 1 1
 1 1 1 1 0 0 0 0 1 1 1 1 0 0 0 0
@@ -9,18 +10,22 @@ The following illustrates the 2 LED-Matrices that are connected to the Microcont
 0 0 0 0 1 1 1 1 0 0 0 0 1 1 1 1
 1 1 1 1 0 0 0 0 1 1 1 1 0 0 0 0
 0 0 0 0 1 1 1 1 0 0 0 0 1 1 1 1
+
 drawBitOnMap() sets the Bit at the PositionX and PositionY so that it is turned on
   PosX is in range 0 to 15
   Posy is in range 0 to 7
 */
+
 void drawBitOnMap(byte PosX, byte PosY, byte BITMAP[]){
   if(PosX > 7){
     BITMAP[PosY + 8] ^= (B00000001 << (PosX-8));
+
   }
   else{
     BITMAP[PosY] ^= (B00000001 << PosX);
   } 
 }
+
 
 // Fills an entire array with Bytes that are all 1 --> The default state of the LED-Matrices for 1 is off
 void createBitMap(byte Bitmap[], int bitmap_Lenght){
@@ -28,6 +33,7 @@ void createBitMap(byte Bitmap[], int bitmap_Lenght){
     Bitmap[i] = B11111111;
   } 
 }
+
 
 void drawBitmapToScreen(byte BITMAP[]){
   byte Screen1[] = {BITMAP[0],BITMAP[1],BITMAP[2],BITMAP[3],BITMAP[4],BITMAP[5],BITMAP[6],BITMAP[7]};
@@ -64,6 +70,7 @@ void setDisplay() {
 
 /*
 Uses an 8 by 8 bitmap to draw Pixels onto the screen
+
 1 1 1 1 0 0 0 0
 0 0 0 0 1 1 1 1
 1 1 1 1 0 0 0 0
@@ -72,6 +79,7 @@ Uses an 8 by 8 bitmap to draw Pixels onto the screen
 0 0 0 0 1 1 1 1
 1 1 1 1 0 0 0 0
 0 0 0 0 1 1 1 1
+
 This would be an example for the 8 by 8 bitmap that
 could be drawn onto the display
 */

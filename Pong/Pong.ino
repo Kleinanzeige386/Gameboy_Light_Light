@@ -89,7 +89,7 @@ Direction ballVelocity[2];    // x | y directions of the ball
 Player user;    // Human player
 Player bot;     // Bot player
 
-int poti=0;
+
 
 /*
  * Grid schema
@@ -134,46 +134,37 @@ void DrawSetup();
  * Functions
  */
 
-void setup(){
+void setup() {
 
-  Serial.begin(9600);
-  pinMode(LED_BUILTIN, OUTPUT);
-  Potisetup();
-  Drawsetup();
-  for (byte i = 22; i <= 52; i += 2)
-    pinMode(i, OUTPUT);
-  for (byte i = 23; i <= 53; i += 2)
-    pinMode(i, OUTPUT);
+    Serial.begin(9600);
+    pinMode(LED_BUILTIN, OUTPUT);
+    Potisetup();
+    Drawsetup();
+    for (byte i = 22; i <= 53; i++){
+        pinMode(i, OUTPUT);
+    }
 }
 
 
 
 void loop(){
-  resetRequest();
-drawBitOnMap(4,4);
-  Serial.print(getDrawRequest());
-for(int i = 0; i < 1000; i++)
-  {
-drawToScreen();
-  }
-  delay(1000);
-  //main();
+  main();
 }
 
 
 
 int main()
 {
-  /*
+
     user.border = LEFT_BORDER;
     bot.border = RIGHT_BORDER;
 
+    //Play Rounds until one Player reached the required Points
     while((playerPoints[0]<=POINTSTOWIN) && (playerPoints[1]<=POINTSTOWIN)){
         playRound();
         game +=1;
     }
-    */
-    writeOutput();
+
 
     return 0;
 }
@@ -183,7 +174,7 @@ void playRound(){
 
   
     while(!checkWin()){
-        readPoti();
+
         delay(MSperStep); 
         movePlayers();
         moveBall();
@@ -195,31 +186,32 @@ void playRound(){
 }
 
 void resetRound(){
-    ball[0]=8;
-    ball[1]=4;
+    ball[0]=MATRIXWIDTH/2;
+    ball[1]=MATRIXHEIGHT/2;
 
     ballVelocity[0]=DOWN;
     ballVelocity[1]=RIGHT;
 
-    user.yCoordinate = 0;
+    user.yCoordinate = MATRIXHEIGHT/2;
     user.direction = DOWN;
 
-    bot.yCoordinate = 0;
+    bot.yCoordinate = MATRIXHEIGHT/2;
     bot.direction = DOWN;
 }
 
-bool checkWin(){    //Is Ball on the far left or right side of the Matrix?
-/*
+bool checkWin(){
+
+    //Is Ball on the far left or right side of the Matrix?
     if (ball[0] == (RIGHT_BORDER))
     {
         playerPoints[0]++;
         return true;   //Left Player wins
-    }else if (ball[0] == LEFT_BORDER)   //Left Side
+    }else if (ball[0] == LEFT_BORDER)
     {
         playerPoints[1]++;
         return true; //Right Player wins
     }
-*/
+
     return false;
 
 }
@@ -232,12 +224,12 @@ void moveBall(){
 }
 
 void checkBallVelo(){
-    if( ( ball[0]==LEFT_BORDER ) /*|| ( hitsPlayer()== -1)*/ )//Ball hits leftBorder or User
+    if( ( hitsPlayer()== -1)//Ball hits User
     {
         ballVelocity[0] = RIGHT;
     }
 
-    if( ( ball[0]==RIGHT_BORDER ) /*|| ( hitsPlayer()== 1)*/ )//Ball hits leftBorder or User
+    if( ( hitsPlayer()== 1) )//Ball hits leftBorder or User
     {
         ballVelocity[0] = LEFT;
     }
@@ -256,7 +248,7 @@ void checkBallVelo(){
 
 }
 
-int hitsPlayer(){
+int hitsPlayer(){// -1 == user | 1 == bot | 0==false
     if( ball[0]==LEFT_BORDER+1 ){ //does ball hit user?
         if( (ball[1]== user.yCoordinate) || (ball[1]== user.yCoordinate+1)){
             return -1;
@@ -270,10 +262,10 @@ int hitsPlayer(){
     }
 
     return 0; //ball doesnt hit anything
-}// -1 == user | 1 == bot | 0==false
+}
 
 
-Player changeBotVeloSmart(Player player){
+Player changeBotVeloSmart(Player player){ //Adjust Bot position to ball coordinates
 
     if(player.yCoordinate+1 > ball[1]){ //Is players head lower than ball?
         player.direction =UP;                                                                                                             //              bot
@@ -310,62 +302,22 @@ void movePlayers(){
 
 
 void getPlayerInput(){
-    user.yCoordinate = poti;
+    readPoti(); //Update poti variable
+    user.yCoordinate = GameOutput; //Set player coordinates to input
 }
 
-
-byte xToByte(int x){
-  switch(x){
-    case 0:
-      return B10000000;
-  
-    case 1:
-      return B01000000;
-
-    case 2:
-      return B00100000;
-
-    case 3:
-      return B00010000;
-
-    case 4:
-      return B00001000;
-
-    case 5:
-      return B00000100;
-
-    case 6:
-      return B00000010;
-
-    case 7:
-      return B00000001;
-  
-  }
-
-
-
-
-
-
-  
-
-}
 
 void writeOutput(){
-  /*
+
   drawBitOnMap(ball[0],ball[1]);
 
   drawBitOnMap(0, user.yCoordinate);
   drawBitOnMap(0, user.yCoordinate+1);
 
-
   drawBitOnMap(MATRIXWIDTH-1, bot.yCoordinate);
   drawBitOnMap(MATRIXWIDTH-1, bot.yCoordinate+1);
-  */
-  drawBitOnMap(4,4);
 
-  drawToScreen();
-
+    drawToScreen();
 }
 
 
