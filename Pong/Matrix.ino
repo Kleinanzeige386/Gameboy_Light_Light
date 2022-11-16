@@ -1,3 +1,7 @@
+/*
+ * Includes
+ */
+#include "Project.h"
 
 /*
 The following illustrates the 2 LED-Matrices that are connected to the Microcontroller side by side
@@ -28,7 +32,7 @@ void drawBitOnMap(byte PosX, byte PosY, byte BITMAP[]){
 
 
 // Fills an entire array with Bytes that are all 1 --> The default state of the LED-Matrices for 1 is off
-void createBitMap(byte Bitmap[], int bitmap_Lenght){
+void createBitMap(byte Bitmap[], int bitmap_Length){
   for(byte i = 0; i < bitmap_Length; i++){
     Bitmap[i] = B11111111;
   } 

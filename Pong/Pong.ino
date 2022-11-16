@@ -1,72 +1,29 @@
+
+
 /*
  * Includes
  */
- #include <Arduino.h>
+#include <Arduino.h>
+#include "Project.h"
 
 
 /*
- * Constants
- */
-const int MATRIXWIDTH = 16;     //Number of collumns in the matrix
-const int MATRIXHEIGHT = 8;     //Number of rows in the matrix
-const int POINTSTOWIN = 100;    //Number of Points, needed to win
-const int MSperStep=50;        // Miliseconds between steps
-
-
-
-#define ROW_1 22
-#define ROW_2 24
-#define ROW_3 26
-#define ROW_4 28
-#define ROW_5 30
-#define ROW_6 32
-#define ROW_7 34
-#define ROW_8 36
-
-#define COL_1 38
-#define COL_2 40
-#define COL_3 42
-#define COL_4 44
-#define COL_5 46
-#define COL_6 48
-#define COL_7 50
-#define COL_8 52
-
-#define ROW_9 23
-#define ROW_10 25
-#define ROW_11 27
-#define ROW_12 29
-#define ROW_13 31
-#define ROW_14 33
-#define ROW_15 35
-#define ROW_16 37
-
-#define COL_9 39
-#define COL_10 41
-#define COL_11 43
-#define COL_12 45
-#define COL_13 47
-#define COL_14 49
-#define COL_15 51
-#define COL_16 53
-
-const byte row1[] = {
+* IDK why but Arduino wants this to be here??
+*/
+const byte row1[8] = {
   ROW_1, ROW_2, ROW_3, ROW_4, ROW_5, ROW_6, ROW_7, ROW_8,
 };
-const byte row2[] = {
+const byte row2[8] = {
    ROW_9, ROW_10, ROW_11, ROW_12, ROW_13, ROW_14, ROW_15, ROW_16
 };
-const byte col1[] = {
+const byte col1[8] = {
   COL_1, COL_2, COL_3, COL_4, COL_5, COL_6, COL_7, COL_8
 };
-const byte col2[] ={
+const byte col2[8] ={
    COL_9, COL_10, COL_11, COL_12, COL_13, COL_14, COL_15, COL_16
 };
 
 
-/*
- * Datatypes
- */
 enum Border{LEFT_BORDER = 0, RIGHT_BORDER = MATRIXWIDTH-1, UPPER_BORDER = 0, LOWER_BORDER = MATRIXHEIGHT-1, };
 enum Direction{LEFT = -1, RIGHT = 1,UP = -1,DOWN = 1};
 
@@ -89,6 +46,8 @@ Direction ballVelocity[2];    // x | y directions of the ball
 Player user;    // Human player
 Player bot;     // Bot player
 
+int GameOutput = 0;
+
 
 
 /*
@@ -105,59 +64,32 @@ Player bot;     // Bot player
  */
 
 
-/*
- * Function prototypes
- */
-int main(); //Main program
-
-void playRound();   //plays a round of Pong until one Player scores a point
-void resetRound();  //resets all needed variables
-bool checkWin();     //checks whether the ball hits a goal
-
-void moveBall();//moves the ball 1 space in each of its directions
-int hitsPlayer();
-void checkBallVelo();   //checks whether the ball hits a border / Player
-
-void changeBotVeloSmart();  //Used by bot player to track the ball movement
-void movePlayers();    //moves players
-
-
-void getPlayerInput(); //Change Position to Poti status
-void writeOutput(); // Write Coords to Matrix
-
-void Poitsetup();
-void DrawSetup();
-
 
 
 /*
  * Functions
  */
 
-void setup() {
 
-    Serial.begin(9600);
-    pinMode(LED_BUILTIN, OUTPUT);
-    Potisetup();
-    Drawsetup();
-    for (byte i = 22; i <= 53; i++){
-        pinMode(i, OUTPUT);
-    }
-}
+void PongSetup(){
 
-
-
-void loop(){
-  main();
-}
-
-
-
-int main()
-{
+    ball[0]=MATRIXWIDTH/2;
+    ball[1]=MATRIXHEIGHT/2;
+    ballVelocity[0]=DOWN;
+    ballVelocity[1]=RIGHT;
 
     user.border = LEFT_BORDER;
+    user.yCoordinate = -1 + MATRIXHEIGHT/2;
+    user.direction = DOWN;
+
     bot.border = RIGHT_BORDER;
+    bot.yCoordinate = -1 + MATRIXHEIGHT/2;
+    bot.direction = DOWN;
+}
+
+int pongMain(){
+
+
 
     //Play Rounds until one Player reached the required Points
     while((playerPoints[0]<=POINTSTOWIN) && (playerPoints[1]<=POINTSTOWIN)){
@@ -169,18 +101,18 @@ int main()
     return 0;
 }
 
+
 void playRound(){
     resetRound();
+    drawPongDelay(50);
 
   
     while(!checkWin()){
-
-        delay(MSperStep); 
-        movePlayers();
-        moveBall();
-        
-        writeOutput();
-
+      movePlayers();
+      moveBall();
+      
+      writePongOutput();
+      drawPongDelay(MSperStep); 
     }
 
 }
@@ -192,10 +124,8 @@ void resetRound(){
     ballVelocity[0]=DOWN;
     ballVelocity[1]=RIGHT;
 
-    user.yCoordinate = MATRIXHEIGHT/2;
-    user.direction = DOWN;
 
-    bot.yCoordinate = MATRIXHEIGHT/2;
+    bot.yCoordinate = -1 + MATRIXHEIGHT/2;
     bot.direction = DOWN;
 }
 
@@ -223,8 +153,24 @@ void moveBall(){
     ball[1]+=ballVelocity[1];
 }
 
+int hitsPlayer(){// -1 == user | 1 == bot | 0==false
+    if( ball[0]==LEFT_BORDER+1 ){ //does ball hit user?
+        if( (ball[1]== user.yCoordinate) || (ball[1]== user.yCoordinate+1)){
+            return -1;
+        }
+    }
+
+    if( ball[0]==RIGHT_BORDER-1 ){ //does ball hit bot?
+        if(( ball[1]== bot.yCoordinate) || (ball[1]== bot.yCoordinate+1)){
+            return 1;
+        }
+    }
+
+    return 0; //ball doesnt hit anything
+}
+
 void checkBallVelo(){
-    if( ( hitsPlayer()== -1)//Ball hits User
+    if( ( hitsPlayer()== -1))//Ball hits User
     {
         ballVelocity[0] = RIGHT;
     }
@@ -246,22 +192,6 @@ void checkBallVelo(){
     }
 
 
-}
-
-int hitsPlayer(){// -1 == user | 1 == bot | 0==false
-    if( ball[0]==LEFT_BORDER+1 ){ //does ball hit user?
-        if( (ball[1]== user.yCoordinate) || (ball[1]== user.yCoordinate+1)){
-            return -1;
-        }
-    }
-
-    if( ball[0]==RIGHT_BORDER-1 ){ //does ball hit bot?
-        if(( ball[1]== bot.yCoordinate) || (ball[1]== bot.yCoordinate+1)){
-            return 1;
-        }
-    }
-
-    return 0; //ball doesnt hit anything
 }
 
 
@@ -293,12 +223,15 @@ Player changeBotVeloSmart(Player player){ //Adjust Bot position to ball coordina
 }
 
 void movePlayers(){
+  
     getPlayerInput(); //Get Player position from Input
+
+
+    
 
     bot = changeBotVeloSmart(bot);
     bot.yCoordinate  += bot.direction;
 }
-
 
 
 void getPlayerInput(){
@@ -307,19 +240,30 @@ void getPlayerInput(){
 }
 
 
-void writeOutput(){
+void writePongOutput(){
+  byte temp[16];
+  
+  createBitMap(temp,16);
 
-  drawBitOnMap(ball[0],ball[1]);
+  drawBitOnMap(ball[0],ball[1],temp);
 
-  drawBitOnMap(0, user.yCoordinate);
-  drawBitOnMap(0, user.yCoordinate+1);
 
-  drawBitOnMap(MATRIXWIDTH-1, bot.yCoordinate);
-  drawBitOnMap(MATRIXWIDTH-1, bot.yCoordinate+1);
 
-    drawToScreen();
+  drawBitOnMap(0, user.yCoordinate,temp);
+  drawBitOnMap(0, user.yCoordinate+1,temp);
+
+  drawBitOnMap(MATRIXWIDTH-1, bot.yCoordinate,temp);
+  drawBitOnMap(MATRIXWIDTH-1, bot.yCoordinate+1,temp);
+
+  
+  drawBitmapToScreen(temp);
+  
+
 }
 
-
-
-
+void drawPongDelay(int n){
+  for(int i=0; i<n; i++){
+    delay(1);
+    writePongOutput();
+  }
+}
