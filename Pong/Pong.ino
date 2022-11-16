@@ -46,7 +46,7 @@ Direction ballVelocity[2];    // x | y directions of the ball
 Player user;    // Human player
 Player bot;     // Bot player
 
-int GameOutput = 0;
+int GameOutput = 0; //Value from Poti
 
 
 

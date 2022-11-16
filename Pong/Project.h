@@ -12,8 +12,9 @@
 
 //Setup
 void Potisetup();
-//void DrawSetup();
+void DrawSetup();
 void PongSetup();
+void DinoSetup();
 
 //Pong
 int pongMain(); //Main program
@@ -34,3 +35,19 @@ void getPlayerInput(); //Change Position to Poti status
 
 void writePongOutput(); // Write Coords to Matrix
 void drawPongDelay(int n);
+
+
+//Poti
+void readPoti();
+
+
+
+//Matrix
+void createBitMap(byte Bitmap[], int bitmap_Length);
+
+void drawBitOnMap(byte Bitmap[], int bitmap_Length);
+void drawBitmapToScreen(byte BITMAP[]); //
+void drawScreen(byte buffer2[], byte row[], byte column[]);
+
+void resetDisplay();
+void setDisplay();

@@ -13,7 +13,8 @@ int PotiInput = A0;
 
 void Potisetup() {
   // put your setup code here, to run once:
-pinMode(buzzer, OUTPUT);
+  Serial.begin(9600);
+  pinMode(buzzer, OUTPUT);
 }
 
 

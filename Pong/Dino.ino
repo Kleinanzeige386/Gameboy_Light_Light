@@ -11,7 +11,7 @@ typedef struct Obstacle{
 int dino;
 Obstacle obstacles[100];
 
-void dinoSetup(){
+void DinoSetup(){
 Obstacle temp;
   temp.xCoordinate= MATRIXWIDTH-1;
   temp.height = 0;
