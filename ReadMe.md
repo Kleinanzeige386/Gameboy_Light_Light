@@ -43,3 +43,8 @@ Mittels zwei 8x8 Marixen, einer 4-Stellen 7-Segment Anzeige und einem Potentiome
 - Chrome Dino Game
 - Flappy Bird
 - Snake
+
+## Layout of the Board
+Hier können die einzelnen Verbindungen zwischen den LED-Matrizen, dem Potentiometer und dem Buzzer und dem Board selbst gesehen werden.
+
+<img width="513" alt="Screenshot 2022-11-17 at 15 12 44" src="https://user-images.githubusercontent.com/58913260/202468950-7dc98c56-93bf-4060-bfe6-947465b9d195.png">
