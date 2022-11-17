@@ -54,7 +54,7 @@
  */
 
 
-#define POINTSTOWIN 100    //Number of Points, needed to win
+#define POINTSTOWIN 5    //Number of Points, needed to win
 #define MSperStep 10        // Miliseconds between steps
 
 
@@ -66,4 +66,35 @@
  */
 
  #define PIXEL_PER_STEP 1
+
+
+/*
+ *================================================================
+ * IRRemote
+ *================================================================
+ */
+#define	ZERO	16738455
+#define	ONE	16724175
+#define	TWO	16718055
+#define	THREE	16743045
+#define	FOUR	16716015
+#define	FIVE	16726215
+#define	SIX	16734885
+#define	SEVEN	16728765
+#define	EIGHT	16730805
+#define	NINE	16732845
+#define	PWR	16753245
+#define	MODE	16736925
+#define	MUTE	16769565
+#define	STOP_RESUME	16720605
+#define	LAST	16712445
+#define	NEXT	16761405
+#define	EQ	16769055
+#define	MINUS	16754775
+#define	PLUS	16748655
+#define	SNAKE	16750695
+#define	USDOLLAR	16756815
+
+
+
 

@@ -12,11 +12,11 @@ int dino;
 Obstacle obstacles[100];
 
 void DinoSetup(){
-Obstacle temp;
-  temp.xCoordinate= MATRIXWIDTH-1;
-  temp.height = 0;
+Obstacle tempDino;
+  tempDino.xCoordinate= MATRIXWIDTH-1;
+  tempDino.height = 0;
   for(int i=0; i<100;i++){
-    obstacles[i] = temp;
+    obstacles[i] = tempDino;
   }
 }
 
@@ -46,25 +46,27 @@ void moveObstacles(){
 }
 
 void writeDinoOutput(){
-  byte temp[16];
+  byte tempDino[16];
   
-  createBitMap(temp,16);
+  createBitMap(tempDino,16);
 
-  drawBitOnMap(2,MATRIXHEIGHT-2-dino,temp);
-  drawBitOnMap(2,MATRIXHEIGHT-3-dino,temp);
+  drawBitOnMap(2,MATRIXHEIGHT-2-dino,tempDino);
+  drawBitOnMap(2,MATRIXHEIGHT-3-dino,tempDino);
+
 
   for(int i=0;i<MATRIXWIDTH;i++){
-    drawBitOnMap(i,MATRIXHEIGHT-1,temp);
+    drawBitOnMap(i,MATRIXHEIGHT-1,tempDino);
   }
+  
 
   for(int i=0; i<100;i++){
     for(int j=0; j<obstacles[i].height;j++){
-      drawBitOnMap(obstacles[i].xCoordinate,MATRIXHEIGHT-j-1,temp);
+      drawBitOnMap(obstacles[i].xCoordinate,MATRIXHEIGHT-j-1,tempDino);
     }
   }
 
 
-  drawBitmapToScreen(temp);
+  drawBitmapToScreen(tempDino);
   
 
 }
@@ -72,6 +74,6 @@ void writeDinoOutput(){
 void drawDinoDelay(int n){
   for(int i=0; i<n; i++){
     delay(1);
-    writePongOutput();
+    writeDinoOutput();
   }
 }
