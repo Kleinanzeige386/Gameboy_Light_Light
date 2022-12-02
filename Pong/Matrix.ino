@@ -20,6 +20,15 @@ drawBitOnMap() sets the Bit at the PositionX and PositionY so that it is turned 
   Posy is in range 0 to 7
 */
 
+void DrawSetup(){
+  for (int i = 22; i <= 52; i += 2){
+        pinMode(i, OUTPUT);
+    }
+    for (int i = 23; i <= 53; i += 2){
+        pinMode(i, OUTPUT);
+    }
+}
+
 void drawBitOnMap(byte PosX, byte PosY, byte BITMAP[]){
   if(PosX > 7){
     BITMAP[PosY + 8] ^= (B00000001 << (PosX-8));

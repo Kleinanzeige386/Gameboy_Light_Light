@@ -3,29 +3,26 @@
  */
 #include "Project.h"
 
-int input;
 
 
 
 void setup() {
+    
 
-    input=1;
-    Serial.begin(9600);
-    pinMode(LED_BUILTIN, OUTPUT);
+    pinMode(LED_BUILTIN, OUTPUT); //Why this here?
     Potisetup();
-
-    for (int i = 22; i <= 52; i += 2){
-        pinMode(i, OUTPUT);
-    }
-    for (int i = 23; i <= 53; i += 2){
-        pinMode(i, OUTPUT);
-    }
-
-    dinoSetup();
+    DrawSetup();
+    PongSetup();
+    DinoSetup();
+    IRRemoteSetup();
 }
 
 
 void loop(){
+  while(1){
+  int input = readIRRemote();
+  
+
   switch(input){
     case 0:
       pongMain();
@@ -34,7 +31,67 @@ void loop(){
     case 1:
       dinoMain();
     break;
+  
+    case 10:
+      heartBeat();
   }
   
-  delay(100000);
+  }
+  
 }
+
+
+void heartBeat(){
+  while(1){
+    for(int i=0; i<50;i++){
+      beat1();
+    }
+    for(int i=0; i<20;i++){
+      beat2();
+    }
+  }
+  
+}
+
+void beat1(){
+  
+  byte temp[16];
+  
+  createBitMap(temp,16);
+
+  drawBitOnMap(MATRIXWIDTH/2, MATRIXHEIGHT/2,temp);
+  drawBitOnMap(MATRIXWIDTH/2, MATRIXHEIGHT/2-1,temp);
+  drawBitOnMap(MATRIXWIDTH/2-1, MATRIXHEIGHT/2,temp);
+  drawBitOnMap(MATRIXWIDTH/2-1, MATRIXHEIGHT/2-1,temp);
+  
+  drawBitmapToScreen(temp);
+
+
+}
+
+void beat2(){
+byte temp[16];
+  
+  createBitMap(temp,16);
+
+  drawBitOnMap(MATRIXWIDTH/2, MATRIXHEIGHT/2,temp);
+  drawBitOnMap(MATRIXWIDTH/2, MATRIXHEIGHT/2-1,temp);
+  drawBitOnMap(MATRIXWIDTH/2-1, MATRIXHEIGHT/2,temp);
+  drawBitOnMap(MATRIXWIDTH/2-1, MATRIXHEIGHT/2-1,temp);
+
+  drawBitOnMap(MATRIXWIDTH/2-2, MATRIXHEIGHT/2,temp);
+  drawBitOnMap(MATRIXWIDTH/2-2, MATRIXHEIGHT/2-1,temp);
+
+  drawBitOnMap(MATRIXWIDTH/2+1, MATRIXHEIGHT/2,temp);
+  drawBitOnMap(MATRIXWIDTH/2+1, MATRIXHEIGHT/2-1,temp);
+
+  drawBitOnMap(MATRIXWIDTH/2, MATRIXHEIGHT/2-2,temp);
+  drawBitOnMap(MATRIXWIDTH/2-1, MATRIXHEIGHT/2-2,temp);
+
+  drawBitOnMap(MATRIXWIDTH/2, MATRIXHEIGHT/2+1,temp);
+  drawBitOnMap(MATRIXWIDTH/2-1, MATRIXHEIGHT/2+1,temp);
+  
+  drawBitmapToScreen(temp);
+
+}
+

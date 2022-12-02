@@ -46,7 +46,7 @@ Direction ballVelocity[2];    // x | y directions of the ball
 Player user;    // Human player
 Player bot;     // Bot player
 
-int GameOutput = 0;
+int GameOutput = 0; //Value from Poti
 
 
 
@@ -75,7 +75,7 @@ void PongSetup(){
 
     ball[0]=MATRIXWIDTH/2;
     ball[1]=MATRIXHEIGHT/2;
-    ballVelocity[0]=DOWN;
+    ballVelocity[0]=LEFT;
     ballVelocity[1]=RIGHT;
 
     user.border = LEFT_BORDER;
@@ -92,7 +92,7 @@ int pongMain(){
 
 
     //Play Rounds until one Player reached the required Points
-    while((playerPoints[0]<=POINTSTOWIN) && (playerPoints[1]<=POINTSTOWIN)){
+    while((playerPoints[0]<POINTSTOWIN) && (playerPoints[1]<POINTSTOWIN)){
         playRound();
         game +=1;
     }
@@ -121,8 +121,8 @@ void resetRound(){
     ball[0]=MATRIXWIDTH/2;
     ball[1]=MATRIXHEIGHT/2;
 
-    ballVelocity[0]=DOWN;
-    ballVelocity[1]=RIGHT;
+    ballVelocity[0]=RIGHT;
+    ballVelocity[1]=LEFT;
 
 
     bot.yCoordinate = -1 + MATRIXHEIGHT/2;
@@ -130,6 +130,7 @@ void resetRound(){
 }
 
 bool checkWin(){
+  
 
     //Is Ball on the far left or right side of the Matrix?
     if (ball[0] == (RIGHT_BORDER))
@@ -141,7 +142,7 @@ bool checkWin(){
         playerPoints[1]++;
         return true; //Right Player wins
     }
-
+    
     return false;
 
 }
@@ -154,14 +155,20 @@ void moveBall(){
 }
 
 int hitsPlayer(){// -1 == user | 1 == bot | 0==false
-    if( ball[0]==LEFT_BORDER+1 ){ //does ball hit user?
+    int virtualBall[2];
+    virtualBall[0] = ball[0]+ballVelocity[0];
+    virtualBall[1] = ball[1]+ballVelocity[1];
+
+    Player virtualBot = changeBotVeloSmart(bot);
+
+    if( virtualBall[0]==LEFT_BORDER ){ //does ball hit user?
         if( (ball[1]== user.yCoordinate) || (ball[1]== user.yCoordinate+1)){
             return -1;
         }
     }
 
-    if( ball[0]==RIGHT_BORDER-1 ){ //does ball hit bot?
-        if(( ball[1]== bot.yCoordinate) || (ball[1]== bot.yCoordinate+1)){
+    if( virtualBall[0]==RIGHT_BORDER ){ //does ball hit bot?
+        if(( virtualBall[1]== virtualBot.yCoordinate) || (virtualBall[1]== virtualBot.yCoordinate-1)){
             return 1;
         }
     }
@@ -172,12 +179,12 @@ int hitsPlayer(){// -1 == user | 1 == bot | 0==false
 void checkBallVelo(){
     if( ( hitsPlayer()== -1))//Ball hits User
     {
-        ballVelocity[0] = RIGHT;
+        ballVelocity[0] = LEFT;
     }
 
     if( ( hitsPlayer()== 1) )//Ball hits leftBorder or User
     {
-        ballVelocity[0] = LEFT;
+        ballVelocity[0] = RIGHT;
     }
 
 
@@ -211,7 +218,7 @@ Player changeBotVeloSmart(Player player){ //Adjust Bot position to ball coordina
             player.direction = DOWN;
             break;
 
-        case LOWER_BORDER: //Body hits lower Border
+        case LOWER_BORDER-1: //Body hits lower Border
             player.direction =UP;
             break;
 
@@ -220,6 +227,7 @@ Player changeBotVeloSmart(Player player){ //Adjust Bot position to ball coordina
     }
 
     return player;
+
 }
 
 void movePlayers(){
@@ -241,9 +249,11 @@ void getPlayerInput(){
 
 
 void writePongOutput(){
-  byte temp[16];
+  
+byte temp[16];
   
   createBitMap(temp,16);
+
 
   drawBitOnMap(ball[0],ball[1],temp);
 
@@ -252,18 +262,19 @@ void writePongOutput(){
   drawBitOnMap(0, user.yCoordinate,temp);
   drawBitOnMap(0, user.yCoordinate+1,temp);
 
+
   drawBitOnMap(MATRIXWIDTH-1, bot.yCoordinate,temp);
   drawBitOnMap(MATRIXWIDTH-1, bot.yCoordinate+1,temp);
-
   
   drawBitmapToScreen(temp);
   
 
 }
 
+
+
 void drawPongDelay(int n){
   for(int i=0; i<n; i++){
-    delay(1);
     writePongOutput();
   }
 }
